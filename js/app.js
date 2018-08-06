@@ -14,19 +14,35 @@ var icons = ["fa fa-diamond","fa fa-diamond","fa fa-paper-plane-o","fa fa-paper-
 
 const allCards = document.querySelector(".deck");
 
-var matched = document.querySelector(".match");
+let matched = document.querySelector(".match");
 
-var listItems = []
+let listItems = []
 
-var matchedItems = [];
+let matchedItems = [];
 
-var stringMoves = document.querySelector(".moves");
+let stringMoves = document.querySelector(".moves");
 
-var moves = stringMoves.textContent = 0;
+let moves = stringMoves.textContent = 0;
 
-var stars = document.getElementById("stars");
+let stars = document.getElementById("stars");
 
-var restart = document.querySelector(".restart");
+let interval;
+
+let restart = document.querySelector(".restart");
+
+let modalText = document.querySelector(".modalText")
+
+let modal = document.getElementById('myModal');
+
+document.getElementById("timer").innerHTML = "0mins 0secs"
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+
 
 
 // Shuffle function from http://stackoverflow.com/a/2450976
@@ -89,6 +105,9 @@ allCards.addEventListener("click", function(e){
 // Adding Moves
 function addMove() {
     moves++;
+    if (moves === 1){
+        Timer();
+    }
     stringMoves.textContent = moves;
 }
 // Open the Card
@@ -145,8 +164,18 @@ function ratings() {
 // GameOver: Check if the game is over.
 function gameOver() {
     if (icons.length === matchedItems.length){
+        clearInterval(interval)
         setTimeout(() => {
-            alert("Congratulations, You finished with " + moves + " moves");
+        modal.style.display = "block";
+        if(stars.children.length === 1){
+            modalText.innerHTML = `<p>Congratulations, You finished with ${moves} moves in ${document.getElementById("timer").innerHTML} and your rating is: <i class="fa fa-star"></i></p>`;
+            }
+        if(stars.children.length === 2){
+                modalText.innerHTML = `<p>Congratulations, You finished with ${moves} moves in ${document.getElementById("timer").innerHTML} and your rating is: <i class="fa fa-star"></i> <i class="fa fa-star"></i></p>`;
+            }
+        if(stars.children.length === 3){
+            modalText.innerHTML = `<p>Congratulations, You finished with ${moves} moves in ${document.getElementById("timer").innerHTML} and your rating is: <i class="fa fa-star"></i><i class="fa fa-star"> </i><i class="fa fa-star"></i></p>`;
+            }
         }, 500);
         stringMoves.textContent = "You finished with " + moves;
     }
@@ -155,6 +184,18 @@ function gameOver() {
 function isMatched() {
     matchedItems.push(listItems[0]);
     matchedItems.push(listItems[1]);
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }
 // Restart the game.
 restart.addEventListener("click", function(){
@@ -167,6 +208,28 @@ restart.addEventListener("click", function(){
     stars.innerHTML = ""
     createStars();
     ratings();
+    clearInterval(interval)
+    document.getElementById("timer").innerHTML = `0mins 0secs`
 });
 //  Start for the first time.
 init();
+
+// My Timer:
+
+function Timer(){
+        var h = 00
+        var m = 00
+        var s = 00
+    interval = setInterval( function() {
+        s++
+        if (s == 60) {
+            m++
+            s = 0
+        }
+        if (m == 60) {
+            h++
+            m = 0
+        }
+        document.getElementById("timer").innerHTML = `${m}mins ${s}secs`
+    }, 1000);
+}
